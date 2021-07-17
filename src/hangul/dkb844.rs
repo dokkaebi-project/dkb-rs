@@ -21,8 +21,8 @@ pub(crate) enum Dkb844HangulLUT {
     CompatChoIdxLookup,
 }
 
-fn lookupTable(tableId: Dkb844HangulLUT, idx: usize) -> Result<usize, ()> { // Well, possible err is obvious here, isn't it?
-    match tableId {
+fn dkb844_lookup(table_id: Dkb844HangulLUT, idx: usize) -> Result<usize, ()> { // Well, possible err is obvious here, isn't it?
+    match table_id {
         Dkb844HangulLUT::ChoLookup1 => {
             if CHO_LOOKUP1.len() < idx { Err(()) } else { Ok(CHO_LOOKUP1[idx]) }
         },
@@ -41,9 +41,6 @@ fn lookupTable(tableId: Dkb844HangulLUT, idx: usize) -> Result<usize, ()> { // W
         Dkb844HangulLUT::CompatChoIdxLookup => {
             if COMPAT_CHO_LOOKUP.len() < idx { Err(()) } else { Ok(COMPAT_CHO_LOOKUP[idx]) }
         },
-        _ => {
-            Err(())
-        }
     }
 }
 
