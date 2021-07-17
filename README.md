@@ -29,6 +29,13 @@ but still finding suitable font format in 8x16
 
 I could not find any Hanzi bitmap font in "old format" yet.
 
+## Fonts that will not be supported
+
+### Hanja
+
+Since the modern Korean language does not use Hanja frequently, there is
+no point to invest time to research Hanja support.
+
 ### Hangul
 
 * Dokkaebi font in 10x4x4 format
