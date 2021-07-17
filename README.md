@@ -4,7 +4,11 @@ Font renderer which supports Latin and CJK
 
 This crate is compatible with `no-std`
 
-## Currently supported fonts
+## Current status
+
+Work in progress, does not function yet.
+
+## ~~Currently supported fonts~~ First release target milestone
 
 * Latin
 * Hangul - Dokkaebi 844
