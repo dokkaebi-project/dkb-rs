@@ -1,4 +1,8 @@
-#[no_std]
+#![no_std]
+mod common;
+mod hangul;
+mod kanakanji;
+mod latin;
 
 #[cfg(test)]
 mod tests {
