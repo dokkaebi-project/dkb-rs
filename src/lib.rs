@@ -1,8 +1,13 @@
 #![no_std]
+
 mod common;
 mod hangul;
 mod kanakanji;
 mod latin;
+
+pub struct FontRenderer {
+    //
+}
 
 #[cfg(test)]
 mod tests {

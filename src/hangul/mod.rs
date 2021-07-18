@@ -1,5 +1,5 @@
 mod dkb844;
-use super::common::FontRenderer;
+use super::common::CharacterRenderer;
 
 pub enum HangulFontFormat {
     DKB844,
@@ -9,8 +9,10 @@ pub struct HangulRenderer {
 
 }
 
-impl FontRenderer for HangulRenderer {
-    //
+impl CharacterRenderer for HangulRenderer {
+    fn render(&self, character: char, buf: &[u8]) -> Option<&u8> {
+        None
+    }
 }
 
 impl HangulRenderer {
