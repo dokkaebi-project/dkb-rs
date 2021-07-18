@@ -76,11 +76,11 @@ impl Dkb844 {
             0x314F..=0x3163 => Some((0, (codept - 0x314F + 1) as usize, 0)),
             0xAC00..=0xD7A3 => {
                 let nchr = codept - 0xAC00;
-                let choIdx = nchr / (0x0015 * 0x001C) + 1;
-                let jungIdx = (nchr / 0x001C) % 0x0015 + 1;
-                let jongIdx = nchr % 0x001C;
+                let cho_idx = nchr / (0x0015 * 0x001C) + 1;
+                let jung_idx = (nchr / 0x001C) % 0x0015 + 1;
+                let jong_idx = nchr % 0x001C;
 
-                Some((choIdx as usize, jungIdx as usize, jongIdx as usize))
+                Some((cho_idx as usize, jung_idx as usize, jong_idx as usize))
             }
             _ => None
         }
