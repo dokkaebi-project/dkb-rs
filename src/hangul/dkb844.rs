@@ -76,13 +76,50 @@ impl Dkb844 {
             0x314F..=0x3163 => Some((0, (codept - 0x314F + 1) as usize, 0)),
             0xAC00..=0xD7A3 => {
                 let nchr = codept - 0xAC00;
-                let cho_idx = nchr / (0x0015 * 0x001C) + 1;
+                    let cho_idx = nchr / (0x0015 * 0x001C) + 1;
                 let jung_idx = (nchr / 0x001C) % 0x0015 + 1;
                 let jong_idx = nchr % 0x001C;
 
                 Some((cho_idx as usize, jung_idx as usize, jong_idx as usize))
             }
             _ => None
+        }
+    }
+
+    fn choose_set(&self, tup: (usize, usize, usize)) -> Option<(usize, usize, usize)> {
+        match tup {
+            (0, 0, 0) => Some((0, 0, 0)),
+            (_, 0, 0) => Some((1, 0, 0)),
+            (0, _, 0) => Some((0, 0, 0)),
+            (0, 0, _) => Some((0, 0, 0)),
+            (cho_idx, jung_idx, 0) => {
+                let cho_set = match dkb844_lookup(Dkb844HangulLUT::ChoLookup1, jung_idx) {
+                    Ok(x) => x,
+                    Err(_) => return None,
+                };
+                let jung_set = match dkb844_lookup(Dkb844HangulLUT::JungLookup1, cho_idx) {
+                    Ok(x) => x,
+                    Err(_) => return None,
+                };
+
+                Some((cho_set, jung_set, 0))
+            },
+            (cho_idx, jung_idx, _) => {
+                let cho_set = match dkb844_lookup(Dkb844HangulLUT::ChoLookup2, jung_idx) {
+                    Ok(x) => x,
+                    Err(_) => return None,
+                };
+                let jung_set = match dkb844_lookup(Dkb844HangulLUT::JungLookup2, cho_idx) {
+                    Ok(x) => x,
+                    Err(_) => return None,
+                };
+                let jong_set = match dkb844_lookup(Dkb844HangulLUT::JongLookup, jung_idx) {
+                    Ok(x) => x,
+                    Err(_) => return None,
+                };
+
+                Some((cho_set, jung_set, jong_set))
+            }
         }
     }
 }
