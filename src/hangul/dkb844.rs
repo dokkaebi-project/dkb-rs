@@ -131,6 +131,11 @@ impl CharacterRenderer for Dkb844 {
             None => return None,
         };
 
+        let set = match self.choose_set(decomposed) {
+            Some(tup) => tup,
+            None => return None,
+        };
+
         None
     }
 }
