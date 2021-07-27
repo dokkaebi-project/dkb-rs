@@ -6,9 +6,9 @@ This crate is compatible with `no-std`
 
 ## Current status
 
-Work in progress, does not function yet.
+Able to render Latin and Hangul. API is not stable yet.
 
-## ~~Currently supported fonts~~ First release target milestone
+## Currently supported fonts
 
 * Latin
 * Hangul - Dokkaebi 844
