@@ -2,8 +2,8 @@
 
 mod common;
 pub mod hangul;
-mod kanakanji;
-mod latin;
+pub mod kanakanji;
+pub mod latin;
 
 pub use common::CharacterRenderer;
 pub use common::RenderFailureReason;
