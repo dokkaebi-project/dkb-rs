@@ -10,7 +10,7 @@ pub struct KanaKanjiRenderer {
 }
 
 impl CharacterRenderer for KanaKanjiRenderer {
-    fn render(&self, character: char, buf: &[u8]) -> Option<&u8> {
+    fn render(&self, character: char, buf: &mut [u8]) -> Option<(usize, usize)> {
         None
     }
 }

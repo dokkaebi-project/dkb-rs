@@ -2,6 +2,8 @@ use core::usize;
 
 use crate::common::CharacterRenderer;
 
+use super::HangulSyllable;
+
 // Rendering data.
 // choLookup1, 2: Key is jungIdx
 // jungLookup   : Key is choIdx
@@ -47,14 +49,36 @@ fn dkb844_lookup(table_id: Dkb844HangulLUT, idx: usize) -> Result<usize, ()> { /
     }
 }
 
-pub(crate) struct Dkb844 {
-    //
+pub struct Dkb844<'a> {
+    rom: &'a[u8],
+    width: usize,
+    height: usize,
+    char_sz: usize,
 }
 
-impl Dkb844 {
-    pub fn new() -> Dkb844 {
+impl<'a> Dkb844<'a> {
+    pub fn new(rom: &'a[u8], width: usize, height: usize) -> Dkb844<'a> {
         Dkb844 {
-            //
+            rom,
+            width,
+            height,
+            char_sz: (width + 7) / 8 * height,
+        }
+    }
+
+    fn getoff(&self, syllable: HangulSyllable, set: usize, charoff: usize) -> usize {
+        match syllable {
+            HangulSyllable::Choseong => {
+                (self.char_sz * 20) * set + self.char_sz * charoff
+            },
+            HangulSyllable::Jungseong => {
+                let baseoff = self.getoff(HangulSyllable::Choseong, 8, 0);
+                baseoff + (self.char_sz * 22) * set + self.char_sz * charoff
+            },
+            HangulSyllable::Jongseong => {
+                let baseoff = self.getoff(HangulSyllable::Jungseong, 4, 0);
+                baseoff + (self.char_sz * 28) * set + self.char_sz * charoff
+            },
         }
     }
 
@@ -124,8 +148,8 @@ impl Dkb844 {
     }
 }
 
-impl CharacterRenderer for Dkb844 {
-    fn render(&self, character: char, buf: &[u8]) -> Option<&u8> {
+impl<'a> CharacterRenderer for Dkb844<'a> {
+    fn render(&self, character: char, buf: &mut [u8]) -> Option<(usize, usize)> {
         let decomposed = match self.decompose_char(character) {
             Some(tup) => tup,
             None => return None,
@@ -136,6 +160,29 @@ impl CharacterRenderer for Dkb844 {
             None => return None,
         };
 
-        None
+        let off: [usize; 3] = [
+            self.getoff(HangulSyllable::Choseong, set.0, decomposed.0),
+            self.getoff(HangulSyllable::Jungseong, set.1, decomposed.1),
+            self.getoff(HangulSyllable::Jongseong, set.2, decomposed.2),
+        ];
+
+        // check given buf has enough size for character
+        if buf.len() < self.char_sz {
+            return None
+        }
+
+        // Zero-fill &buf
+        for idx in 0..self.char_sz {
+            buf[idx] = 0x00;
+        }
+
+        for idx in 0..3 {
+            let syllable = off[idx];
+            for off in 0..self.char_sz {
+                buf[off] |= self.rom[syllable + off];
+            }
+        }
+
+        Some((self.width, self.height))
     }
 }

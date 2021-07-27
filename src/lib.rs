@@ -1,10 +1,11 @@
 #![no_std]
 
 mod common;
-mod hangul;
+pub mod hangul;
 mod kanakanji;
 mod latin;
 
+pub use common::CharacterRenderer;
 pub struct FontRenderer {
     //
 }

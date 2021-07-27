@@ -1,3 +1,4 @@
 pub trait CharacterRenderer {
-    fn render(&self, character: char, buf: &[u8]) -> Option<&u8>;
+    // Returns (width, height)
+    fn render(&self, character: char, buf: &mut [u8]) -> Option<(usize, usize)>;
 }
