@@ -1,12 +1,12 @@
-use crate::common::CharacterRenderer;
+use crate::common::{CharacterRenderer, RenderFailureReason};
 
 pub(crate) struct FONTX {
     //
 }
 
 impl CharacterRenderer for FONTX {
-    fn render(&self, character: char, buf: &mut [u8]) -> Option<(usize, usize)> {
-        None
+    fn render(&self, character: char, buf: &mut [u8]) -> Result<(usize, usize), RenderFailureReason> {
+        todo!()
     }
 }
 

@@ -1,4 +1,6 @@
 mod fnt;
+use crate::common::RenderFailureReason;
+
 use super::common::CharacterRenderer;
 
 pub enum LatinFontFormat {
@@ -11,8 +13,8 @@ pub struct LatinRenderer {
 }
 
 impl CharacterRenderer for LatinRenderer {
-    fn render(&self, character: char, buf: &mut [u8]) -> Option<(usize, usize)> {
-        None
+    fn render(&self, character: char, buf: &mut [u8]) -> Result<(usize, usize), RenderFailureReason> {
+        todo!()
     }
 }
 

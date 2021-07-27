@@ -1,4 +1,4 @@
-use crate::common::CharacterRenderer;
+use crate::common::{CharacterRenderer, RenderFailureReason};
 
 pub(crate) struct FNT {
     width: usize,
@@ -6,8 +6,8 @@ pub(crate) struct FNT {
 }
 
 impl CharacterRenderer for FNT {
-    fn render(&self, character: char, buf: &mut [u8]) -> Option<(usize, usize)> {
-        None
+    fn render(&self, character: char, buf: &mut [u8]) -> Result<(usize, usize), RenderFailureReason> {
+        todo!()
     }
 }
 

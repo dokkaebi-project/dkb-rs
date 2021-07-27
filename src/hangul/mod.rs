@@ -1,4 +1,6 @@
 mod dkb844;
+use crate::common::RenderFailureReason;
+
 use super::common::CharacterRenderer;
 
 pub use dkb844::Dkb844;
@@ -18,8 +20,8 @@ pub struct HangulRenderer {
 }
 
 impl CharacterRenderer for HangulRenderer {
-    fn render(&self, character: char, buf: &mut [u8]) -> Option<(usize, usize)> {
-        None
+    fn render(&self, character: char, buf: &mut [u8]) -> Result<(usize, usize), RenderFailureReason> {
+        todo!()
     }
 }
 

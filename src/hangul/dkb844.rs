@@ -1,6 +1,6 @@
 use core::usize;
 
-use crate::common::CharacterRenderer;
+use crate::common::{CharacterRenderer, RenderFailureReason};
 
 use super::HangulSyllable;
 
@@ -25,7 +25,7 @@ pub(crate) enum Dkb844HangulLUT {
     CompatChoIdxLookup,
 }
 
-fn dkb844_lookup(table_id: Dkb844HangulLUT, idx: usize) -> Result<usize, ()> { // Well, possible err is obvious here, isn't it?
+fn dkb844_lookup(table_id: Dkb844HangulLUT, idx: usize) -> Result<usize, RenderFailureReason> { // Well, possible err is obvious here, isn't it?
     match table_id {
         Dkb844HangulLUT::ChoLookup1 if CHO_LOOKUP1.len() > idx => {
             Ok(CHO_LOOKUP1[idx])
@@ -45,7 +45,7 @@ fn dkb844_lookup(table_id: Dkb844HangulLUT, idx: usize) -> Result<usize, ()> { /
         Dkb844HangulLUT::CompatChoIdxLookup if COMPAT_CHO_LOOKUP.len() > idx => {
             Ok(COMPAT_CHO_LOOKUP[idx])
         },
-        _ => Err(()),
+        _ => Err(RenderFailureReason::UnsupportedCharacter),
     }
 }
 
@@ -82,82 +82,82 @@ impl<'a> Dkb844<'a> {
         }
     }
 
-    fn decompose_char(&self, character: char) -> Option<(usize, usize, usize)> {
+    fn decompose_char(&self, character: char) -> Result<(usize, usize, usize), RenderFailureReason> {
         // Unless future people f*cks the Unicode space with cursed Emoji or
         // untli we succenly find lots of alien civilizaitons with unique
         // writing systems, I think u32 will be fine until next century...
         let codept: u32 = character as u32;
         match codept {
-            0x1100..=0x1112 => Some(((codept - 0x1100 + 1) as usize, 0, 0)),
-            0x1161..=0x1175 => Some((0, (codept - 0x1161 + 1) as usize, 0)),
-            0x11A8..=0x11C2 => Some((0, 0, (codept - 0x11A8 + 1) as usize)),
+            0x1100..=0x1112 => Ok(((codept - 0x1100 + 1) as usize, 0, 0)),
+            0x1161..=0x1175 => Ok((0, (codept - 0x1161 + 1) as usize, 0)),
+            0x11A8..=0x11C2 => Ok((0, 0, (codept - 0x11A8 + 1) as usize)),
             0x3131..=0x314E => {
                 match dkb844_lookup(Dkb844HangulLUT::CompatChoIdxLookup, (codept - 0x3131) as usize) {
-                    Ok(idx) => Some((idx, 0, 0)),
-                    Err(_) => None,
+                    Ok(idx) => Ok((idx, 0, 0)),
+                    Err(x) => Err(x),
                 }
             },
-            0x314F..=0x3163 => Some((0, (codept - 0x314F + 1) as usize, 0)),
+            0x314F..=0x3163 => Ok((0, (codept - 0x314F + 1) as usize, 0)),
             0xAC00..=0xD7A3 => {
                 let nchr = codept - 0xAC00;
                     let cho_idx = nchr / (0x0015 * 0x001C) + 1;
                 let jung_idx = (nchr / 0x001C) % 0x0015 + 1;
                 let jong_idx = nchr % 0x001C;
 
-                Some((cho_idx as usize, jung_idx as usize, jong_idx as usize))
+                Ok((cho_idx as usize, jung_idx as usize, jong_idx as usize))
             }
-            _ => None
+            _ => Err(RenderFailureReason::UnsupportedCharacter)
         }
     }
 
-    fn choose_set(&self, tup: (usize, usize, usize)) -> Option<(usize, usize, usize)> {
+    fn choose_set(&self, tup: (usize, usize, usize)) -> Result<(usize, usize, usize), RenderFailureReason> {
         match tup {
-            (0, 0, 0) => Some((0, 0, 0)),
-            (_, 0, 0) => Some((1, 0, 0)),
-            (0, _, 0) => Some((0, 0, 0)),
-            (0, 0, _) => Some((0, 0, 0)),
+            (0, 0, 0) => Ok((0, 0, 0)),
+            (_, 0, 0) => Ok((1, 0, 0)),
+            (0, _, 0) => Ok((0, 0, 0)),
+            (0, 0, _) => Ok((0, 0, 0)),
             (cho_idx, jung_idx, 0) => {
                 let cho_set = match dkb844_lookup(Dkb844HangulLUT::ChoLookup1, jung_idx) {
                     Ok(x) => x,
-                    Err(_) => return None,
+                    Err(x) => return Err(x),
                 };
                 let jung_set = match dkb844_lookup(Dkb844HangulLUT::JungLookup1, cho_idx) {
                     Ok(x) => x,
-                    Err(_) => return None,
+                    Err(x) => return Err(x),
                 };
 
-                Some((cho_set, jung_set, 0))
+                Ok((cho_set, jung_set, 0))
             },
             (cho_idx, jung_idx, _) => {
                 let cho_set = match dkb844_lookup(Dkb844HangulLUT::ChoLookup2, jung_idx) {
                     Ok(x) => x,
-                    Err(_) => return None,
+                    Err(x) => return Err(x),
                 };
                 let jung_set = match dkb844_lookup(Dkb844HangulLUT::JungLookup2, cho_idx) {
                     Ok(x) => x,
-                    Err(_) => return None,
+                    Err(x) => return Err(x),
                 };
                 let jong_set = match dkb844_lookup(Dkb844HangulLUT::JongLookup, jung_idx) {
                     Ok(x) => x,
-                    Err(_) => return None,
+                    Err(x) => return Err(x),
                 };
 
-                Some((cho_set, jung_set, jong_set))
+                Ok((cho_set, jung_set, jong_set))
             }
         }
     }
 }
 
 impl<'a> CharacterRenderer for Dkb844<'a> {
-    fn render(&self, character: char, buf: &mut [u8]) -> Option<(usize, usize)> {
+    fn render(&self, character: char, buf: &mut [u8]) -> Result<(usize, usize), RenderFailureReason> {
         let decomposed = match self.decompose_char(character) {
-            Some(tup) => tup,
-            None => return None,
+            Ok(tup) => tup,
+            Err(x) => return Err(x),
         };
 
         let set = match self.choose_set(decomposed) {
-            Some(tup) => tup,
-            None => return None,
+            Ok(tup) => tup,
+            Err(x) => return Err(x),
         };
 
         let off: [usize; 3] = [
@@ -168,7 +168,7 @@ impl<'a> CharacterRenderer for Dkb844<'a> {
 
         // check given buf has enough size for character
         if buf.len() < self.char_sz {
-            return None
+            return Err(RenderFailureReason::NotEnoughBuffer);
         }
 
         // Zero-fill &buf
@@ -183,6 +183,6 @@ impl<'a> CharacterRenderer for Dkb844<'a> {
             }
         }
 
-        Some((self.width, self.height))
+        Ok((self.width, self.height))
     }
 }

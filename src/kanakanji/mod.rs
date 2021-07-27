@@ -1,4 +1,6 @@
 mod fontx;
+use crate::common::RenderFailureReason;
+
 use super::common::CharacterRenderer;
 
 pub enum KanaKanjiFontFormat {
@@ -10,8 +12,8 @@ pub struct KanaKanjiRenderer {
 }
 
 impl CharacterRenderer for KanaKanjiRenderer {
-    fn render(&self, character: char, buf: &mut [u8]) -> Option<(usize, usize)> {
-        None
+    fn render(&self, character: char, buf: &mut [u8]) -> Result<(usize, usize), RenderFailureReason> {
+        todo!();
     }
 }
 
