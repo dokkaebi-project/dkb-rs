@@ -1,6 +1,6 @@
 use crate::common::{CharacterRenderer, RenderFailureReason};
 
-pub(crate) struct FNT {
+pub struct FNT {
     width: usize,
     height: usize,
 }

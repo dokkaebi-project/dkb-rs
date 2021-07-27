@@ -1,6 +1,6 @@
 use crate::common::{CharacterRenderer, RenderFailureReason};
 
-pub(crate) struct FONTX {
+pub struct FONTX {
     //
 }
 
