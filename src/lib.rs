@@ -6,6 +6,7 @@ mod kanakanji;
 mod latin;
 
 pub use common::CharacterRenderer;
+pub use common::RenderFailureReason;
 pub struct FontRenderer {
     //
 }
