@@ -1,6 +1,6 @@
-# Bitmapfont-rs, the retro font renderer which supports Latin, Korean and Japanese. Implemented in Rust
+# dkb-rs, the retro font renderer which supports Latin, Korean and Japanese. Implemented in Rust
 
-Font renderer which supports Latin and CJK
+dkb(dokkaebi)-rs, the dokkaebi project reference renderer
 
 This crate is compatible with `no-std`
 
