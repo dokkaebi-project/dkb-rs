@@ -34,11 +34,7 @@ impl CharacterRenderer for FONTX<'_> {
             return Err(RenderFailureReason::UnsupportedCharacter);
         }
 
-        let off = match self.get_sjis_offset(character) {
-            Ok(x) => x,
-            Err(x) => return Err(x),
-        };
-
+        let off = self.get_sjis_offset(character)?;
         for idx in 0..self.char_sz {
             buf[idx] = self.rom[off + idx];
         }

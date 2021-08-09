@@ -117,31 +117,14 @@ impl<'a> Dkb844<'a> {
             (0, _, 0) => Ok((0, 0, 0)),
             (0, 0, _) => Ok((0, 0, 0)),
             (cho_idx, jung_idx, 0) => {
-                let cho_set = match dkb844_lookup(Dkb844HangulLUT::ChoLookup1, jung_idx) {
-                    Ok(x) => x,
-                    Err(x) => return Err(x),
-                };
-                let jung_set = match dkb844_lookup(Dkb844HangulLUT::JungLookup1, cho_idx) {
-                    Ok(x) => x,
-                    Err(x) => return Err(x),
-                };
-
+                let cho_set = dkb844_lookup(Dkb844HangulLUT::ChoLookup1, jung_idx)?;
+                let jung_set = dkb844_lookup(Dkb844HangulLUT::JungLookup1, cho_idx)?;
                 Ok((cho_set, jung_set, 0))
             },
             (cho_idx, jung_idx, _) => {
-                let cho_set = match dkb844_lookup(Dkb844HangulLUT::ChoLookup2, jung_idx) {
-                    Ok(x) => x,
-                    Err(x) => return Err(x),
-                };
-                let jung_set = match dkb844_lookup(Dkb844HangulLUT::JungLookup2, cho_idx) {
-                    Ok(x) => x,
-                    Err(x) => return Err(x),
-                };
-                let jong_set = match dkb844_lookup(Dkb844HangulLUT::JongLookup, jung_idx) {
-                    Ok(x) => x,
-                    Err(x) => return Err(x),
-                };
-
+                let cho_set = dkb844_lookup(Dkb844HangulLUT::ChoLookup2, jung_idx)?;
+                let jung_set = dkb844_lookup(Dkb844HangulLUT::JungLookup2, cho_idx)?;
+                let jong_set = dkb844_lookup(Dkb844HangulLUT::JongLookup, jung_idx)?;
                 Ok((cho_set, jung_set, jong_set))
             }
         }
@@ -150,15 +133,8 @@ impl<'a> Dkb844<'a> {
 
 impl<'a> CharacterRenderer for Dkb844<'a> {
     fn render(&self, character: char, buf: &mut [u8]) -> Result<(usize, usize), RenderFailureReason> {
-        let decomposed = match self.decompose_char(character) {
-            Ok(tup) => tup,
-            Err(x) => return Err(x),
-        };
-
-        let set = match self.choose_set(decomposed) {
-            Ok(tup) => tup,
-            Err(x) => return Err(x),
-        };
+        let decomposed = self.decompose_char(character)?;
+        let set = self.choose_set(decomposed)?;
 
         let off: [usize; 3] = [
             self.getoff(HangulSyllable::Choseong, set.0, decomposed.0),
