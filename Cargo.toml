@@ -1,6 +1,6 @@
 [package]
 name = "dkb-rs"
-version = "0.0.2-alpha"
+version = "0.0.2"
 edition = "2018"
 description = "dkb-rs, the old bitmap font renderer which supports Latin, Korean and Japanese. Implemented in Rust"
 repository = "https://github.com/dokkaebi-project/dkb-rs.git"
