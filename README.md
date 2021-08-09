@@ -8,6 +8,8 @@ This crate is compatible with `no-std`
 
 Able to render Latin and Hangul. API is not stable yet.
 
+Documentation in progress
+
 ## Currently supported fonts
 
 ### Latin
