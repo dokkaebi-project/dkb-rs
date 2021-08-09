@@ -2,6 +2,11 @@
 name = "dkb-rs"
 version = "0.0.1-alpha"
 edition = "2018"
+description = "dkb-rs, the old bitmap font renderer which supports Latin, Korean and Japanese. Implemented in Rust"
+repository = "https://github.com/dokkaebi-project/dkb-rs.git"
+license = "MPL-2.0"
+keywords = ["Dokkaebi", "FONTX", "FNT", "font"]
+categories = ["no-std"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
