@@ -10,18 +10,16 @@ Able to render Latin and Hangul. API is not stable yet.
 
 ## Currently supported fonts
 
-* Latin
-* Hangul - Dokkaebi 844
+### Latin
+* FNT
+
+### Hangul
+* Dokkaebi 844
+
+### Kana and Kanji
+* FONTX
 
 ## Work in progress fonts
-### Kana and Kanji
-
-* FONTX fonts
-
-Will require pre-processing because UTF-8 to Shift-JIS conversion table
-will eat up precious `.text` space and will introduce conversion overhead,
-which will render this library not suitable for embedded system use
-
 ### Cyrillic
 
 Research in progress, Found 8x8 font binary in Poisk(Поиск) ROM image
