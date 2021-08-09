@@ -1,4 +1,5 @@
 pub enum RenderFailureReason {
+    UnknownError,
     UnsupportedCharacter,
     NotEnoughBuffer,
 }
