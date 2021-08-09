@@ -91,23 +91,23 @@ impl<'a> FONTX<'a> {
         match enc.encode_from_utf16_without_replacement(&code_arr, &mut sjis_arr, true) {
             (EncoderResult::InputEmpty, _srcsz, _dstsz ) => {
                 // Do nothing
+                Ok(())
             },
             (EncoderResult::OutputFull, _, _) => {
-                return Err(RenderFailureReason::UnknownError)
+                Err(RenderFailureReason::UnknownError)
             },
             (EncoderResult::Unmappable(_), _, _) => {
-                return Err(RenderFailureReason::UnsupportedCharacter);
+                Err(RenderFailureReason::UnsupportedCharacter)
             }
-        };
+        }?;
 
         let sjis_code = ((sjis_arr[0] as u16) << 8) + sjis_arr[1] as u16;
 
         match self.code {
             FONTXCode::ANK => {
-                if sjis_code < 0xFF {
-                    Ok(self.headersz + (sjis_code as usize) * self.char_sz)
-                } else {
-                    Err(RenderFailureReason::UnsupportedCharacter)
+                match sjis_code {
+                    0..=0xFF => Ok(self.headersz + (sjis_code as usize) * self.char_sz),
+                    _ => Err(RenderFailureReason::UnsupportedCharacter),
                 }
             },
             FONTXCode::ShiftJIS => {
