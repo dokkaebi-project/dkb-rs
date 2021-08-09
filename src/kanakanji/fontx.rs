@@ -155,7 +155,7 @@ mod tests {
 
     #[test]
     fn offset_should_fail() {
-        let fontblob = &fs::read("./testdata/04GZN16X.FNT").unwrap();
+        let fontblob = &fs::read("./testdata/SJIS_HDR.FNT").unwrap();
         let fontx = super::FONTX::new(fontblob).unwrap();
 
         match fontx.get_sjis_offset('가') {
@@ -166,7 +166,7 @@ mod tests {
 
     #[test]
     fn offset_should_success() {
-        let fontblob = &fs::read("./testdata/04GZN16X.FNT").unwrap();
+        let fontblob = &fs::read("./testdata/SJIS_HDR.FNT").unwrap();
         let fontx = super::FONTX::new(fontblob).unwrap();
 
         fontx.get_sjis_offset('の').unwrap();
