@@ -1,5 +1,8 @@
 #![no_std]
 
+#[cfg(test)]
+extern crate std;
+
 mod common;
 pub mod hangul;
 pub mod kanakanji;

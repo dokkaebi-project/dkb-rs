@@ -80,7 +80,7 @@ impl<'a> FONTX<'a> {
         })
     }
 
-    pub fn get_sjis_offset(&self, character: char) -> Result<usize, RenderFailureReason> {
+    fn get_sjis_offset(&self, character: char) -> Result<usize, RenderFailureReason> {
         if character as u32 > 0xFFFF {
             return Err(RenderFailureReason::UnsupportedCharacter);
         }
@@ -130,5 +130,43 @@ impl<'a> FONTX<'a> {
                 Err(RenderFailureReason::UnsupportedCharacter)
             }
         }
+    }
+}
+#[cfg(test)]
+mod tests {
+    use std::fs;
+
+    #[test]
+    fn should_init() {
+        let fontblob = &fs::read("./testdata/SJIS_HDR.FNT").unwrap();
+        let _fontx = super::FONTX::new(fontblob).unwrap();
+    }
+
+    #[test]
+    fn should_fail() {
+        let fontblob = &fs::read("./testdata/DUMMY.FNT").unwrap();
+        match super::FONTX::new(fontblob) {
+            Ok(_) => panic!("It should fail!"),
+            Err(_) => {},
+        }
+    }
+
+    #[test]
+    fn offset_should_fail() {
+        let fontblob = &fs::read("./testdata/04GZN16X.FNT").unwrap();
+        let fontx = super::FONTX::new(fontblob).unwrap();
+
+        match fontx.get_sjis_offset('가') {
+            Ok(_) => panic!("Invalid result"),
+            Err(_) => {},
+        }
+    }
+
+    #[test]
+    fn offset_should_success() {
+        let fontblob = &fs::read("./testdata/04GZN16X.FNT").unwrap();
+        let fontx = super::FONTX::new(fontblob).unwrap();
+
+        fontx.get_sjis_offset('の').unwrap();
     }
 }
