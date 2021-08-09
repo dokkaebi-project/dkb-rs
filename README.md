@@ -1,3 +1,6 @@
+[![crates.io](https://img.shields.io/crates/d/dkb-rs.svg)](https://crates.io/crates/dkb-rs)
+[![crates.io](https://img.shields.io/crates/v/dkb-rs.svg)](https://crates.io/crates/dkb-rs)
+
 # dkb-rs, the retro font renderer which supports Latin, Korean and Japanese. Implemented in Rust
 
 dkb(dokkaebi)-rs, the dokkaebi project reference renderer
