@@ -22,6 +22,20 @@ impl Debug for RenderFailureReason {
     }
 }
 
+pub enum InitializationError {
+    InvalidFormat,
+}
+
+impl Debug for InitializationError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            InitializationError::InvalidFormat => {
+                f.debug_struct("Initialization failed: Invalid file format").finish()
+            },
+        }
+    }
+}
+
 pub trait CharacterRenderer {
     // Returns (width, height)
     fn render(&self, character: char, buf: &mut [u8]) -> Result<(usize, usize), RenderFailureReason>;

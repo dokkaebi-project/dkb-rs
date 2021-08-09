@@ -148,14 +148,12 @@ impl<'a> CharacterRenderer for Dkb844<'a> {
         }
 
         // Zero-fill &buf
-        for idx in 0..self.char_sz {
-            buf[idx] = 0x00;
-        }
+        buf[..self.char_sz].fill(0x00);
 
         for idx in 0..3 {
             let syllable = off[idx];
-            for off in 0..self.char_sz {
-                buf[off] |= self.rom[syllable + off];
+            for (off, elem) in buf.iter_mut().enumerate().take(self.char_sz) {
+                *elem |= self.rom[syllable + off];
             }
         }
 

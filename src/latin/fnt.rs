@@ -19,9 +19,8 @@ impl CharacterRenderer for FNT<'_> {
             return Err(RenderFailureReason::NotEnoughBuffer);
         }
 
-        for idx in 0..self.char_sz {
-            buf[idx] = self.rom[(codept as usize) * self.char_sz + idx];
-        }
+        let off = (codept as usize) * self.char_sz;
+        buf[..self.char_sz].clone_from_slice(&self.rom[off..(self.char_sz + off)]);
 
         Ok((self.width, self.height))
     }

@@ -1,6 +1,6 @@
 use encoding_rs::{EncoderResult, SHIFT_JIS};
 
-use crate::common::{CharacterRenderer, RenderFailureReason};
+use crate::common::{CharacterRenderer, InitializationError, RenderFailureReason};
 
 #[repr(packed)]
 #[derive(Debug, Copy, Clone)]
@@ -13,6 +13,7 @@ struct FontXHeader {
     codeblocks: u8, // Number of code blocks, this does not exist in ANK font
 }
 
+#[allow(clippy::upper_case_acronyms)]
 enum FONTXCode {
     ANK,
     ShiftJIS,
@@ -35,16 +36,13 @@ impl CharacterRenderer for FONTX<'_> {
         }
 
         let off = self.get_sjis_offset(character)?;
-        for idx in 0..self.char_sz {
-            buf[idx] = self.rom[off + idx];
-        }
-
+        buf[..self.char_sz].clone_from_slice(&self.rom[off..(self.char_sz + off)]);
         Ok((self.width, self.height))
     }
 }
 
 impl<'a> FONTX<'a> {
-    pub fn new(rom: &'a[u8]) -> Result<FONTX, ()> {
+    pub fn new(rom: &'a[u8]) -> Result<FONTX, InitializationError> {
         let mut header: FontXHeader = FontXHeader {
             magic: [0; 6],
             name: [0; 8],
@@ -60,13 +58,13 @@ impl<'a> FONTX<'a> {
         }
 
         if header.magic != [0x46, 0x4f, 0x4e, 0x54, 0x58, 0x32] {
-            return Err(());
+            return Err(InitializationError::InvalidFormat);
         }
 
         let code = match header.code_flag {
             0 => FONTXCode::ANK,
             1 => FONTXCode::ShiftJIS,
-            _ => return Err(()),
+            _ => return Err(InitializationError::InvalidFormat),
         };
 
         Ok(FONTX {
@@ -86,7 +84,7 @@ impl<'a> FONTX<'a> {
         }
 
         let code_arr = [character as u16];
-        let mut sjis_arr = [0 as u8; 2];
+        let mut sjis_arr = [0_u8; 2];
         let mut enc = SHIFT_JIS.new_encoder();
         match enc.encode_from_utf16_without_replacement(&code_arr, &mut sjis_arr, true) {
             (EncoderResult::InputEmpty, _srcsz, _dstsz ) => {
